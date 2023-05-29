@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+
+    <title>Model Deployment AJAX</title>
+  </head>
+  <body>
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <div class="container-sm mt-5">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Prediksi bunga iris</h5>
+          <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+
+          <form id="myForm">
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"
+                >Sepal Length</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                step="0.01"
+                name="a"
+                id="a"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"
+                >Sepal Width</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                step="0.01"
+                name="b"
+                id="b"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"
+                >Petal Length</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                step="0.01"
+                name="c"
+                id="c"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label"
+                >Petal Width</label
+              >
+              <input
+                type="number"
+                class="form-control"
+                step="0.01"
+                name="d"
+                id="d"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3" style="display: none" id="result_pred">
+              <label for="exampleInputEmail1" class="form-label">Hasil</label>
+              <input
+                type="text"
+                class="form-control"
+                step="0.01"
+                name="result"
+                id="result"
+                readonly
+              />
+            </div>
+
+            <button class="btn btn-primary" id="submit" type="submit">
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <script
+      src="https://code.jquery.com/jquery-3.7.0.js"
+      integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      $(document).ready(function () {
+        $("#submit").click(function (e) {
+          e.preventDefault();
+
+          var a = $("#a").val();
+          var b = $("#b").val();
+          var c = $("#c").val();
+          var d = $("#d").val();
+
+          $.ajax({
+            type: "POST",
+            url: "http://127.0.0.1:5000/predict",
+            data: {
+              a: a,
+              b: b,
+              c: c,
+              d: d,
+            },
+            dataType: "JSON",
+            success: function (response) {
+              // You will get response from your PHP page (what you echo or print)
+
+              var result = response["prediction"][0];
+
+              if (result == 0) {
+                result = "Ini bunga setosa";
+              } else if (result == 1) {
+                result = "Ini bunga versicolor";
+              } else {
+                result = "Ini bunga virginica";
+              }
+
+              $("#result_pred").show();
+
+              $("#result").val(result);
+
+              console.log(response["prediction"][0]);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(textStatus, errorThrown);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
